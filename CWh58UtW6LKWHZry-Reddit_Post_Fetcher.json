@@ -1,0 +1,391 @@
+{
+  "name": "Reddit Post Fetcher",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "name": "Every 2 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1968,
+        -48
+      ],
+      "id": "ef2a3bd5-8e30-4ebe-9fb4-f55b8a0c6d06"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT token FROM auth_tokens WHERE service = 'reddit' AND expires_at > NOW() LIMIT 1",
+        "options": {}
+      },
+      "name": "Get Active Token",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        -48
+      ],
+      "id": "44f940b9-3ac7-4df5-95db-b84402f1ec26",
+      "credentials": {
+        "postgres": {
+          "id": "eesBTZlP2tL4ByPt",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, last_post_id FROM subreddits WHERE is_active = true ORDER BY priority DESC",
+        "options": {}
+      },
+      "name": "Get Subreddits",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -1568,
+        -48
+      ],
+      "id": "a4aaec15-18b7-4b3e-8bc5-066d79452b7e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Split Into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1376,
+        -48
+      ],
+      "id": "bf7c04fe-319c-4e27-acd1-ac6a30ffde9a"
+    },
+    {
+      "parameters": {
+        "url": "=https://oauth.reddit.com/r/{{$json.name}}/new.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "before",
+              "value": "={{$json.last_post_id || ''}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$node['Get Active Token'].json.token}}"
+            },
+            {
+              "name": "User-Agent",
+              "value": "RedIntel/1.0 by YourUsername"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Fetch Posts from Subreddit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1168,
+        -160
+      ],
+      "id": "0e13cf7f-6838-4ab8-a83a-11ad05e6ccff",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and transform Reddit posts\nconst subredditId = $input.first().json.id;\nconst subredditName = $input.first().json.name;\nconst response = $input.all()[1]?.json;\n\nif (!response || !response.data || !response.data.children) {\n  return [];\n}\n\nconst posts = response.data.children\n  .filter(child => child.kind === 't3')\n  .map(child => {\n    const post = child.data;\n    return {\n      subreddit_id: subredditId,\n      reddit_id: post.id,\n      title: post.title,\n      author: post.author,\n      url: post.url,\n      selftext: post.selftext || null,\n      upvotes: post.ups,\n      downvotes: post.downs || 0,\n      upvote_ratio: post.upvote_ratio,\n      comments_count: post.num_comments,\n      awards_count: post.total_awards_received || 0,\n      created_at: new Date(post.created_utc * 1000).toISOString(),\n      permalink: `https://reddit.com${post.permalink}`,\n      is_video: post.is_video || false,\n      domain: post.domain,\n      thumbnail: post.thumbnail !== 'self' && post.thumbnail !== 'default' ? post.thumbnail : null\n    };\n  });\n\nreturn posts.map(post => ({ json: post }));"
+      },
+      "name": "Parse Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -976,
+        -48
+      ],
+      "id": "d0c6ff9e-6563-4cae-892c-7183fa6f1781"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Deduplicate posts by checking against existing reddit_ids\nconst newPosts = $input.all();\nconst existingIds = new Set();\n\n// This would ideally query the database, but for simplicity:\n// We'll pass all posts and let the database handle conflicts\n// with ON CONFLICT DO NOTHING clause\n\nreturn newPosts;"
+      },
+      "name": "Deduplicate Posts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -768,
+        -48
+      ],
+      "id": "1170ffde-f558-48b1-8451-8c5ac7d72929"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=INSERT INTO posts (subreddit_id, reddit_id, title, author, url, selftext, upvotes, downvotes, upvote_ratio, comments_count, awards_count, created_at, permalink, is_video, domain, thumbnail, fetched_at)\nVALUES \n{{$json.map(post => `(${post.subreddit_id}, '${post.reddit_id}', '${post.title.replace(/'/g, \"''\")}', '${post.author}', '${post.url}', ${post.selftext ? `'${post.selftext.replace(/'/g, \"''\")}'` : 'NULL'}, ${post.upvotes}, ${post.downvotes}, ${post.upvote_ratio}, ${post.comments_count}, ${post.awards_count}, '${post.created_at}', '${post.permalink}', ${post.is_video}, '${post.domain}', ${post.thumbnail ? `'${post.thumbnail}'` : 'NULL'}, NOW())`).join(',\\n')}}\nON CONFLICT (reddit_id) DO UPDATE SET\n  upvotes = EXCLUDED.upvotes,\n  downvotes = EXCLUDED.downvotes,\n  comments_count = EXCLUDED.comments_count,\n  awards_count = EXCLUDED.awards_count,\n  fetched_at = NOW()\nRETURNING id, reddit_id",
+        "options": {}
+      },
+      "name": "Insert Posts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        -48
+      ],
+      "id": "ded8bc08-bbb8-4347-90bf-9434639b7f53",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE subreddits SET last_checked = NOW(), last_post_id = (SELECT reddit_id FROM posts WHERE subreddit_id = {{$node['Split Into Batches'].json.id}} ORDER BY created_at DESC LIMIT 1) WHERE id = {{$node['Split Into Batches'].json.id}}",
+        "options": {}
+      },
+      "name": "Update Subreddit Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        -48
+      ],
+      "id": "d21426be-773f-47b7-90b7-fd8bccbbcc06"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.length}}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Check If Posts Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "4fdfc7e7-4dac-4b13-9704-f671683decba"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/enrich",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "post_ids",
+              "value": "={{$json.map(p => p.id)}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Trigger Enrichment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        32,
+        -160
+      ],
+      "id": "63bdc2a6-512c-4378-aee1-7e995bcfa191",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Calculate engagement velocity for new posts\nconst posts = $input.all();\nconst trendingPosts = [];\n\nfor (const item of posts) {\n  const post = item.json;\n  const ageHours = (Date.now() - new Date(post.created_at).getTime()) / (1000 * 60 * 60);\n  const velocity = post.upvotes / (ageHours + 0.1); // Avoid division by zero\n  \n  // Trending threshold: velocity > 100 upvotes/hour\n  if (velocity > 100) {\n    trendingPosts.push({\n      post_id: post.id,\n      subreddit_id: post.subreddit_id,\n      velocity_score: velocity,\n      peak_engagement: post.upvotes + (post.comments_count * 3)\n    });\n  }\n}\n\nreturn trendingPosts.map(t => ({ json: t }));"
+      },
+      "name": "Detect Trending",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        48
+      ],
+      "id": "fe60c352-a62e-4a1e-9562-4036e8646d56"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=INSERT INTO trends (subreddit_id, post_id, trend_type, velocity_score, peak_engagement, detected_at, expires_at)\nVALUES ({{$json.subreddit_id}}, {{$json.post_id}}, 'viral_spike', {{$json.velocity_score}}, {{$json.peak_engagement}}, NOW(), NOW() + INTERVAL '24 hours')\nON CONFLICT DO NOTHING",
+        "options": {}
+      },
+      "name": "Log Trend",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        240,
+        256
+      ],
+      "id": "5f852763-87ed-41c8-9e1f-266acc7cb22f"
+    }
+  ],
+  "connections": {
+    "Every 2 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Active Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Active Token": {
+      "main": [
+        [
+          {
+            "node": "Get Subreddits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Subreddits": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Batches": {
+      "main": [
+        [
+          {
+            "node": "Fetch Posts from Subreddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Posts from Subreddit": {
+      "main": [
+        [
+          {
+            "node": "Parse Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Posts": {
+      "main": [
+        [
+          {
+            "node": "Deduplicate Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplicate Posts": {
+      "main": [
+        [
+          {
+            "node": "Insert Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Posts": {
+      "main": [
+        [
+          {
+            "node": "Update Subreddit Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Subreddit Status": {
+      "main": [
+        [
+          {
+            "node": "Check If Posts Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Posts Found": {
+      "main": [
+        [
+          {
+            "node": "Trigger Enrichment",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Detect Trending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Trending": {
+      "main": [
+        [
+          {
+            "node": "Log Trend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Trend": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}

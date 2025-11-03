@@ -1,0 +1,1487 @@
+{
+  "name": "Airdrop + Faucet + NFT Radar v3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1984,
+        416
+      ],
+      "id": "1d935f89-238d-4ac9-831b-1bb7e55085ed",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/airdrop",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status:",
+              "value": "ongoing"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=X-CMC_PRO_API_KEY",
+              "value": "=={{$json.CMC_API_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        944
+      ],
+      "id": "ecadf36a-2290-40ed-a6b7-2421eba8a863",
+      "name": "Fetch CoinMarketCap Airdrops"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eadb9b8b-3ca0-456b-922f-a41c0762ba65",
+              "name": "CMC_API_KEY",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "eaaac48b-f0a4-4766-a236-f18d72bdce51",
+              "name": "TG_BOT_TOKEN",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "31a74305-f45a-4d29-b25a-c3451dfe10e1",
+              "name": "TG_CHAT_ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "aef03e3b-7c16-44c7-a9d9-5b675906b24b",
+              "name": "SHEET_NAME",
+              "value": "Airdrop",
+              "type": "string"
+            },
+            {
+              "id": "70b67a98-6af9-4bf9-adb4-8b2b75283bd0",
+              "name": "SHEET_TAB",
+              "value": "Sheet1",
+              "type": "string"
+            },
+            {
+              "id": "957d891c-f775-4089-84df-f73fe73f4cc6",
+              "name": "TWITTER_BEARER",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "759123d2-6fdf-457e-8ffe-f4cdf07b2ba1",
+              "name": "REDDIT_USER_AGENT",
+              "value": "V_NPeBPzat_U4Ry1A34zYw",
+              "type": "string"
+            },
+            {
+              "id": "9621c09b-1ad9-4264-87f0-d0f46cd30ba5",
+              "name": "GALXE_API",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "5253b40e-0e40-4613-afc6-80b1785eb08e",
+              "name": "ZEALY_API",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "c15a18a8-b75d-4fb6-8640-d51572e4981d",
+              "name": "AIRDROPSIO_URL",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1712,
+        400
+      ],
+      "id": "505a2160-300b-484f-9844-e3a733a97aec",
+      "name": "🔐 Secrets (Config)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const list = $json.data || [];\nreturn list.map(a => ({\n  json:{\n    type:'airdrop',\n    project:a.name || a.title || 'Unknown',\n    network:(a.platform?.name || a.network || 'multiple').toLowerCase(),\n    url:(a.urls?.website?.[0] || a.website || '')\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        944
+      ],
+      "id": "6894ce88-d7da-41cb-bff7-4dc06ab2a39b",
+      "name": "🧩 Map CMC Data"
+    },
+    {
+      "parameters": {
+        "url": "https://faucetmonitor.com/api/faucets?network=sepolia",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        768
+      ],
+      "id": "7a287db4-64eb-4b80-8f7f-f8eb9c4b8a65",
+      "name": "🌐 Fetch FaucetMonitor Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        768
+      ],
+      "id": "54387def-7a82-4a41-9ea9-bd0708774a85",
+      "name": "🧩 Map Faucet Data"
+    },
+    {
+      "parameters": {
+        "numberInputs": 8
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -96,
+        -160
+      ],
+      "id": "2fa41e97-8c5a-4102-b24f-533e68d9458a",
+      "name": "🔗 Merge Streams"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Filter Active / Ongoing + NFT Drops ---\n// This keeps all airdrops/faucets that are active or ongoing,\n// AND automatically includes NFT drops (type === 'nftdrop').\n\nreturn items.filter(i => {\n  const s = JSON.stringify(i.json).toLowerCase();\n\n  // Keep if \"active\" or \"ongoing\" appears anywhere,\n  // OR if this item is an NFT drop.\n  return (\n    s.includes('active') ||\n    s.includes('ongoing') ||\n    i.json.type === 'nftdrop'\n  );\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        304
+      ],
+      "id": "9f7ee1d3-b361-4df0-a0ca-87d6f7823a96",
+      "name": "✅ Filter Active / Ongoing"
+    },
+    {
+      "parameters": {
+        "jsCode": "const aliases = {\n  sepolia: 'ethereum-sepolia',\n  goerli: 'ethereum-goerli',\n  bsc: 'binance-smart-chain',\n  matic: 'polygon',\n  avax: 'avalanche'\n};\nfor (const i of items) {\n  const raw = (i.json.network || '').toLowerCase();\n  i.json.network = aliases[raw] || raw || 'unknown';\n}\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        304
+      ],
+      "id": "5f54dccd-a1db-4c9f-907d-8ae6604977e1",
+      "name": "🧭 Normalize Network Names"
+    },
+    {
+      "parameters": {
+        "jsCode": "const store = $getWorkflowStaticData('global');\nif (!store.seen) store.seen = {};\nconst now = new Date().toISOString();\nconst out = [];\n\nfor (const i of items) {\n  const key = `${i.json.type}:${i.json.project}:${i.json.url}`;\n  if (!store.seen[key]) {\n    store.seen[key] = now;\n    out.push(i);\n  }\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        304
+      ],
+      "id": "2a3847a8-a835-4701-83a8-d8f1b12ba14b",
+      "name": "🧽 De-Duplicate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "52f63bca-3029-459e-8ed4-4fcdc300f2eb",
+              "leftValue": "={{$items().length}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        304
+      ],
+      "id": "79b7143b-a1bc-4c74-a7e2-e85dc38eb824",
+      "name": "🔎 Any New Items?"
+    },
+    {
+      "parameters": {
+        "batchSize": 20,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1504,
+        288
+      ],
+      "id": "4d9364ae-986c-4791-827e-d89a798b9d92",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{$items(\"🔐 Secrets (Config)\")[0].json.SHEET_ID}}/values/log!A1:append?valueInputOption=RAW",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization:",
+              "value": "=Bearer {{$items(\"🔐 Secrets (Config)\")[0].json.G_BEARER}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"values\": [\n    [\"{{$now}}\", \"{{$json.type}}\", \"{{$json.project}}\", \"{{$json.network}}\", \"{{$json.url}}\"]\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        272
+      ],
+      "id": "6e506e36-b9d3-4a10-a515-d42c3820263c",
+      "name": "📄 Append to Google Sheets"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{$items(\"🔐 Secrets (Config)\")[0].json.TG_BOT_TOKEN}}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": \"{{$items(\\\"🔐 Secrets (Config)\\\")[0].json.TG_CHAT_ID}}\",\n  \"text\": \"🪙 {{$json.type.toUpperCase()}}: {{$json.project}}\\n{{$json.url}}\",\n  \"parse_mode\": \"Markdown\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1936,
+        272
+      ],
+      "id": "e277b4d9-2c92-47bc-a88c-0b41162a696a",
+      "name": "📨 Telegram Notify"
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/cryptocurrency/search.json?q=airdrop&restrict_sr=1&sort=new&t=day",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent:",
+              "value": "n8n-bot/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        624
+      ],
+      "id": "7b28a960-523b-484a-8cd7-6e73d6a275e2",
+      "name": "🌐 Fetch Reddit Airdrops"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -752,
+        624
+      ],
+      "id": "d810f9a6-2980-4dc0-88de-a9099c6b76d5",
+      "name": "🧩 Map Reddit Data"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twitter.com/2/tweets/search/recent?query=airdrop%20(has:links)%20-lang:ja&max_results=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization:",
+              "value": "=Bearer {{$json.TWITTER_BEARER}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        464
+      ],
+      "id": "7284968b-a6c1-4afd-a6a5-8e7d09864083",
+      "name": "Twitter/X Fetching node"
+    },
+    {
+      "parameters": {
+        "jsCode": "const list = $json.data || [];\nreturn list.map(t => ({\n  json: {\n    type: 'airdrop',\n    project: t.text.slice(0,60) + '...',\n    network: 'unknown',\n    url: `https://twitter.com/i/web/status/${t.id}`\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        464
+      ],
+      "id": "79ee5fec-6b0f-4bf5-b052-46f49cd2a415",
+      "name": "🐦Map Twitter Data"
+    },
+    {
+      "parameters": {
+        "url": "https://airdrops.io/",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        320
+      ],
+      "id": "4fecfdf1-3124-4c82-9ffc-67b10c52ae31",
+      "name": "AIRDROPS.IO SCRAPER"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cheerio = require('cheerio');\nconst html = $json.data || $json;   // depends on node version\nconst $ = cheerio.load(html);\nconst out = [];\n\n$('.airdrops-card').each((i, el) => {\n  const project = $(el).find('.airdrops-title').text().trim();\n  const url = $(el).find('a').attr('href');\n  if (project && url) {\n    out.push({\n      json: {\n        type: 'airdrop',\n        project,\n        network: 'various',\n        url: url.startsWith('http') ? url : `https://airdrops.io${url}`\n      }\n    });\n  }\n});\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        320
+      ],
+      "id": "2ace3c59-804e-44f2-972d-dc4d9fe70be6",
+      "name": "Map Airdrops.IO DATA"
+    },
+    {
+      "parameters": {
+        "url": "https://graphigo.prd.galaxy.eco/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"query { campaignList(first: 50, filter: {status: ACTIVE}) { list { name id slug projectName } } }\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        144
+      ],
+      "id": "44926f16-44da-48f5-a039-2a533b074086",
+      "name": "GALXE (GraphQL API)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const list = $json.data?.campaignList?.list || [];\nreturn list.map(c => ({\n  json: {\n    type: 'airdrop',\n    project: c.projectName || c.name,\n    network: 'unknown',\n    url: `https://galxe.com/${c.slug}`\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        144
+      ],
+      "id": "c247b808-68a1-4364-9d66-af309acd0176",
+      "name": "Galxe MAP"
+    },
+    {
+      "parameters": {
+        "url": "https://api.zealy.io/graphql",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"{ spaces { name id slug } }\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        -16
+      ],
+      "id": "0f9dc45f-29d4-45f5-9cc6-fd4877bec42d",
+      "name": "ZEALY (Crew3)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract list of spaces from Zealy GraphQL response\nconst spaces = $json.data?.spaces || [];\n\n// Create standardized structure for downstream nodes\nreturn spaces.map(space => ({\n  json: {\n    type: 'airdrop',\n    project: space.name || 'Unknown Project',\n    network: 'unknown',\n    url: space.slug\n      ? `https://zealy.io/c/${space.slug}`\n      : `https://zealy.io/`\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        -16
+      ],
+      "id": "0a61cae8-7f59-44fb-92f5-e8ac6d15212d",
+      "name": "🧩 Map Zealy Data"
+    },
+    {
+      "parameters": {
+        "content": "🌐 Data Sources\n────────────────────\nCollects latest airdrops/faucets from:\n• CoinMarketCap (official API)\n• FaucetMonitor (testnets)\n• Reddit JSON feed\n• Twitter/X API v2\n• Airdrops.io (HTML scrape)\n• Galxe GraphQL\n• Zealy (Crew3) GraphQL\n\nEach node → maps to a unified JSON:\n{ type, project, network, url }\n",
+        "height": 1520,
+        "width": 928,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1296,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "1dfdf131-8839-46aa-a488-74043040420c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "🧠 Workflow Control\n────────────────────\n• Cron Trigger: runs every 6 hours\n• Secrets Node: stores all API keys & IDs\n  (CMC, Twitter, Reddit, Telegram, Sheets)\n• Prevents exposing credentials in HTTP nodes\n",
+        "height": 352,
+        "width": 512,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2000,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "307986df-9e31-4cd7-91fb-abdcd78a9e42",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "🧹 Processing Layer\n────────────────────\n• Merge Streams → combines all sources\n• Filter Active/Ongoing → keep live airdrops only\n• Normalize Networks → standardizes chain names\n• De-Duplicate → remove previously seen entries\n• Any New Items? → checks if new data exists\n",
+        "height": 544,
+        "width": 848
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "133c2059-e3fa-40a0-8206-0ad9dd53401f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "📊 Logging & Alerts\n────────────────────\n• Loop Over Items → batch 20 at a time\n• Append to Google Sheets (OAuth)\n    → \"Airdrop Tracker Master\" → tab: \"Airdrop + Faucet Radar v1\"\n• Telegram Notify → sends concise alerts\n• Fully automated, safe, < 30 s per node\n",
+        "height": 512,
+        "width": 704,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1440,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "cba7d9d1-cabc-4647-a08e-9c8f46417399",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "🚀 Planned Upgrades\n────────────────────\n• Add Layer3 / QuestN / RabbitHole feeds\n• Integrate on-chain reward validators\n• AI-based value ranking (soon)\n• Optional Claim Service reintegration\n",
+        "height": 416,
+        "width": 800,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "428e4b23-7373-493c-9456-682f88147beb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8675131-e8ca-4198-a548-7304da604bf9",
+              "name": "ZORA_API_KEY",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "76fcbc54-2d7e-40a3-922f-bc95abcc6fcc",
+              "name": "NFTPORT_API_KEY",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "38966280-04ae-4777-96b8-daa0b611fbef",
+              "name": "OPENSEA_API_KEY",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "b930ca47-190f-4c1c-af00-52bfebedd7a9",
+              "name": "MAGICEDEN_API_KEY",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1680,
+        -720
+      ],
+      "id": "4d83dbc1-8062-4078-9f70-7adc416550fe",
+      "name": "🔐 Secrets (Config) NFT"
+    },
+    {
+      "parameters": {
+        "url": "https://api.zora.co/discover/mints?limit=50",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY:",
+              "value": "={{$json.ZORA_API_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1136,
+        -928
+      ],
+      "id": "d1590c55-205f-4065-8d44-ebf2ba3ddbca",
+      "name": "🟣 Zora API Node"
+    },
+    {
+      "parameters": {
+        "jsCode": "const list = $json.mints || [];\nreturn list.map(m => ({\n  json: {\n    type: 'nftdrop',\n    project: m.collection?.name || 'Unknown Zora Drop',\n    network: 'ethereum',\n    url: `https://zora.co/collect/${m.contractAddress}/${m.tokenId}`\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        -928
+      ],
+      "id": "59ab02eb-c45b-47f8-94cb-7f03ac424c09",
+      "name": "🧩 Map Zora NFT Data"
+    },
+    {
+      "parameters": {
+        "url": "https://api.nftport.xyz/v0/drops",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization:",
+              "value": "={{ $json.NFTPORT_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1136,
+        -768
+      ],
+      "id": "d959fa18-b3f1-44ca-a725-c5f805854a18",
+      "name": "🟣 NFTPort API Node"
+    },
+    {
+      "parameters": {
+        "jsCode": "const arr = $json.drops || [];\nreturn arr.map(d => ({\n  json: {\n    type: 'nftdrop',\n    project: d.name || 'Unknown NFTPort Drop',\n    network: d.chain || 'unknown',\n    url: d.website || d.contract_address || ''\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        -768
+      ],
+      "id": "debd3b3a-6456-4e82-9dd5-6de09111b964",
+      "name": "🧩 Map NFTPort Data"
+    },
+    {
+      "parameters": {
+        "url": "https://api.opensea.io/api/v2/collection?sort_by=seven_day_volume",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY:",
+              "value": "={{ $json.OPENSEA_API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1136,
+        -608
+      ],
+      "id": "977cf70b-1766-4f2d-830e-129187c900b0",
+      "name": "🟣 OpenSea Drops Node"
+    },
+    {
+      "parameters": {
+        "jsCode": "const arr = $json.collections || [];\nreturn arr.map(c => ({\n  json: {\n    type: 'nftdrop',\n    project: c.name,\n    network: 'ethereum',\n    url: `https://opensea.io/collection/${c.slug}`\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        -608
+      ],
+      "id": "360db9e2-3a6d-4ba3-81f4-19043c02ec1a",
+      "name": "🧩 Map OpenSea Data"
+    },
+    {
+      "parameters": {
+        "url": "https://api-mainnet.magiceden.dev/v2/launchpad/collections",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1136,
+        -448
+      ],
+      "id": "65805321-b99d-4303-a08f-1311b97731ed",
+      "name": "🟣 Magic Eden Node"
+    },
+    {
+      "parameters": {
+        "jsCode": "const arr = $json || [];\nreturn arr.map(n => ({\n  json: {\n    type: 'nftdrop',\n    project: n.name || 'Unknown Launchpad',\n    network: 'solana',\n    url: `https://magiceden.io/launchpad/${n.symbol}`\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        -448
+      ],
+      "id": "fa2ff230-c0be-4db1-8944-8f3c7b74d1f9",
+      "name": "🧩 Map MagicEden Data"
+    },
+    {
+      "parameters": {
+        "content": "🎨 NFT Integration Layer\n────────────────────────\nCollects NFT airdrops and free-mint events from:\n• Zora API\n• NFTPort API\n• OpenSea Drops\n• Magic Eden Launchpad\nOutputs unified JSON:\n{ type:'nftdrop', project, network, url }\nMerged with main feed for Sheets + Telegram alerts.\n",
+        "height": 848,
+        "width": 784,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1280,
+        -1136
+      ],
+      "typeVersion": 1,
+      "id": "7c952364-9648-4eae-8d16-4f9cc115a070",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "NFT API KEY",
+        "height": 384,
+        "width": 368,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1824,
+        -864
+      ],
+      "typeVersion": 1,
+      "id": "9385c106-9e7d-4551-8ac8-f4ff2ec1ad65",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -96,
+        -384
+      ],
+      "id": "06c636a2-175b-416b-b1a9-4ccf7b785465",
+      "name": "Merge streams"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "fileName": "NFT merger data"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        -640
+      ],
+      "id": "b3cc33fd-6b0e-437a-93c2-61aa60c3acda",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        256,
+        -432
+      ],
+      "id": "65fe9019-4d75-4a10-a981-8d37e55a8d71",
+      "name": "AIRDROP/FACET RAW data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        480,
+        -512
+      ],
+      "id": "ccc149d8-ab2d-4398-baf5-b9fb2993e24f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "RAW data collection",
+        "height": 464,
+        "width": 768
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "4403a673-5768-4cb9-bd12-9904f94969ce",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        -512
+      ],
+      "id": "3cc5a019-934b-4bdd-8e2c-afc9ca7c446e",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        -1056
+      ],
+      "id": "92845cdd-0f26-42a1-88f2-7fa6f72f8257",
+      "name": "Json collector"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        832
+      ],
+      "id": "8b5a3ac7-4213-4b90-afb0-c5cb0639ea6c",
+      "name": "Json Collector"
+    },
+    {
+      "parameters": {
+        "height": 272,
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        -1184
+      ],
+      "typeVersion": 1,
+      "id": "eb5e04c9-a0d2-4fd0-89b3-7d7747dd822c",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "DATA MERGING ",
+        "height": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -176,
+        -496
+      ],
+      "typeVersion": 1,
+      "id": "9e38e28a-a2c5-48a6-a363-27e9cdb86e16",
+      "name": "Sticky Note9"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "🔐 Secrets (Config)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🔐 Secrets (Config) NFT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch CoinMarketCap Airdrops": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map CMC Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔐 Secrets (Config)": {
+      "main": [
+        [
+          {
+            "node": "ZEALY (Crew3)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GALXE (GraphQL API)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AIRDROPS.IO SCRAPER",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Twitter/X Fetching node",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🌐 Fetch FaucetMonitor Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🌐 Fetch Reddit Airdrops",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch CoinMarketCap Airdrops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Fetch FaucetMonitor Data": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map Faucet Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Map Faucet Data": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "🧩 Map CMC Data": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "🔗 Merge Streams": {
+      "main": [
+        [
+          {
+            "node": "✅ Filter Active / Ongoing",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AIRDROP/FACET RAW data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Filter Active / Ongoing": {
+      "main": [
+        [
+          {
+            "node": "🧭 Normalize Network Names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧭 Normalize Network Names": {
+      "main": [
+        [
+          {
+            "node": "🧽 De-Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧽 De-Duplicate": {
+      "main": [
+        [
+          {
+            "node": "🔎 Any New Items?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔎 Any New Items?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "📄 Append to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📄 Append to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "📨 Telegram Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Fetch Reddit Airdrops": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map Reddit Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Map Reddit Data": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Twitter/X Fetching node": {
+      "main": [
+        [
+          {
+            "node": "🐦Map Twitter Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🐦Map Twitter Data": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "AIRDROPS.IO SCRAPER": {
+      "main": [
+        [
+          {
+            "node": "Map Airdrops.IO DATA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Airdrops.IO DATA": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "GALXE (GraphQL API)": {
+      "main": [
+        [
+          {
+            "node": "Galxe MAP",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Galxe MAP": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "ZEALY (Crew3)": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map Zealy Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Map Zealy Data": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔐 Secrets (Config) NFT": {
+      "main": [
+        [
+          {
+            "node": "🟣 Zora API Node",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🟣 NFTPort API Node",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🟣 OpenSea Drops Node",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🟣 Magic Eden Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟣 Zora API Node": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map Zora NFT Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟣 NFTPort API Node": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map NFTPort Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟣 OpenSea Drops Node": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map OpenSea Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🟣 Magic Eden Node": {
+      "main": [
+        [
+          {
+            "node": "🧩 Map MagicEden Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Json collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Map Zora NFT Data": {
+      "main": [
+        [
+          {
+            "node": "Merge streams",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Map NFTPort Data": {
+      "main": [
+        [
+          {
+            "node": "Merge streams",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "🧩 Map OpenSea Data": {
+      "main": [
+        [
+          {
+            "node": "Merge streams",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "🧩 Map MagicEden Data": {
+      "main": [
+        [
+          {
+            "node": "Merge streams",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge streams": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Streams",
+            "type": "main",
+            "index": 7
+          },
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AIRDROP/FACET RAW data": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Json collector": {
+      "main": [
+        []
+      ]
+    },
+    "Json Collector": {
+      "main": [
+        []
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,1119 @@
+{
+  "name": "Lead generator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -688,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "8fc07818-f461-448f-b3f6-71a507d015b5"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -512,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "9de8ab2e-ecbb-4a85-a830-53424377fe4a"
+    },
+    {
+      "parameters": {
+        "path": "reddit-webhook-1",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -512,
+        112
+      ],
+      "webhookId": "reddit-webhook-1",
+      "typeVersion": 1,
+      "id": "19f91254-780a-4515-ac30-3dd70fe60e33"
+    },
+    {
+      "parameters": {},
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -512,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "235ceebb-8f18-42fe-9aa9-3c6e83bf1a4d"
+    },
+    {
+      "parameters": {},
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        -304,
+        96
+      ],
+      "typeVersion": 2,
+      "id": "f922e5e1-bd74-4de5-a30a-f5eb34f76c12"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -176,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "2ec49e0f-c2af-4360-a7c0-51c402c79083"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Load Subreddit Config",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -112,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "10bb1d03-da63-4f4a-8b79-f36787b9acd7"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "1c970f5a-0611-414a-9adb-9e5d4e61f83c"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Split Subreddits",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        96,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "1396021b-d348-4398-b70b-1bb3a6b62128"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "e6c8e5dc-1b8d-4770-af9d-50076fffcd7c"
+    },
+    {
+      "parameters": {},
+      "name": "Search Posts",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        288,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "1324dbae-2dac-44c5-b2ae-191e1a0d1081"
+    },
+    {
+      "parameters": {},
+      "name": "Search Competitor Mentions",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        288,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "542ef7df-ce39-46fa-8ae5-09b6abdbc8d8"
+    },
+    {
+      "parameters": {},
+      "name": "Merge Search Results",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        496,
+        96
+      ],
+      "typeVersion": 2,
+      "id": "29d8c006-7a90-4983-abef-9d4debfba1d9"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        624,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "67452203-5e0e-4b62-bc08-57c4defa4fee"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Check Engagement History",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        688,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "8eb7416e-958a-434c-8c21-e10b97d0b15f"
+    },
+    {
+      "parameters": {},
+      "name": "Filter New Posts",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        896,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "b4cb5c6a-481d-4857-9f16-ff0f560fd8b7"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1024,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "f6f46f29-1b31-48ab-af8e-2aa864a9a6bd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "AI Stage 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1088,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "aa3b2f58-5c13-4ec4-85ea-8322e3355f1b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "AI Stage 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1296,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "c2a2eb12-e29f-41e3-b2f4-fa4f80f3721f"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "AI Stage 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1488,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "f82e4486-749c-494e-9d55-b8dc1802e12b"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1616,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "5a44dc08-dfb8-40c3-b37a-81e6c2656590"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Get Historical Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1696,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "25c136f5-a38e-4d71-88c0-3b2ab0472ee4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "ML Prediction",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1888,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "87c5cd04-bea0-4850-8c07-e07a92d3a385"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2016,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "068889d6-82fd-4dd9-a3f6-31cb6ab2cbd1"
+    },
+    {
+      "parameters": {},
+      "name": "Route by Priority",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        2096,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "9b87507f-92f4-4765-9475-58f0d765216a"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2288,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "fa0e011b-f0a0-49f6-802c-74ff4e7c0fba"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Alert Team",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2352,
+        -144
+      ],
+      "typeVersion": 3,
+      "id": "92d21cc7-c562-4596-aa1f-983ac18480f4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Generate Competitive",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2352,
+        32
+      ],
+      "typeVersion": 3,
+      "id": "bc326858-d549-49c4-a6e0-a95cf6e0754b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Generate Premium",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2352,
+        176
+      ],
+      "typeVersion": 3,
+      "id": "9bc584fa-f00d-492e-9fd5-ed117237c679"
+    },
+    {
+      "parameters": {},
+      "name": "Select Variant",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2560,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "0faf2aee-2e14-4e14-bb60-609aae53004d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Generate Standard",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2352,
+        320
+      ],
+      "typeVersion": 3,
+      "id": "f2d7472b-a38c-4eb7-86df-c4e137ff05ad"
+    },
+    {
+      "parameters": {},
+      "name": "Merge Responses",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2752,
+        144
+      ],
+      "typeVersion": 2,
+      "id": "df34e5fb-b360-41a1-96c6-bd0fbf60d719"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2896,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "facdf2de-ce4a-491d-9938-33930d15d4e7"
+    },
+    {
+      "parameters": {},
+      "name": "Quality Check",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2960,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "1bd0f843-7f40-478e-9df2-f10f15bfe13a"
+    },
+    {
+      "parameters": {},
+      "name": "Quality Gate",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        3152,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "7203a324-848d-4509-adbe-42fdd06e83e6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Flag Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3360,
+        272
+      ],
+      "typeVersion": 3,
+      "id": "f11f0328-3d60-41a3-b707-0a9cabe494d4"
+    },
+    {
+      "parameters": {},
+      "name": "Rate Limit",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        3360,
+        48
+      ],
+      "typeVersion": 1,
+      "webhookId": "427bc35f-d99c-49cb-8010-c1c4098b576b",
+      "id": "e6cb9c67-0c94-447e-a6cf-314f76294f72"
+    },
+    {
+      "parameters": {},
+      "name": "Post Comment",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        3552,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "833a3603-6fc0-4e3f-a560-5161a0beaa31"
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3696,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "21567540-4bb7-4f4a-896a-6e0f917c0d4b"
+    },
+    {
+      "parameters": {},
+      "name": "Check Lead",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        3760,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "f427c120-acec-4e6a-823f-9f0b522fa606"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Enrich Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3952,
+        -64
+      ],
+      "typeVersion": 3,
+      "id": "16dcb1b8-eef7-4e88-8015-722cb012dcb9"
+    },
+    {
+      "parameters": {},
+      "name": "Score Lead",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        4160,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "6b57705f-62e1-4048-bcc9-a37ae9cfbee3"
+    },
+    {
+      "parameters": {},
+      "name": "Route Lead",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        4352,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "73d57f38-49fa-4ce8-af10-4fb2a2bd9b14"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Create Hot Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4560,
+        -224
+      ],
+      "typeVersion": 3,
+      "id": "94b05022-2cdd-462b-bb15-8201a62264c3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Alert Sales",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4752,
+        -224
+      ],
+      "typeVersion": 3,
+      "id": "96cebeeb-1a85-49cb-bcf8-489d7acddf24"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Start Premium Nurture",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4960,
+        -224
+      ],
+      "typeVersion": 3,
+      "id": "1b2e9e18-f38f-4e5e-89ff-c6d2541d8505"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Create Warm Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4560,
+        -64
+      ],
+      "typeVersion": 3,
+      "id": "3ddc172f-987a-483c-9ce2-5481481ee7ba"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Start Warm Nurture",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4752,
+        -64
+      ],
+      "typeVersion": 3,
+      "id": "e4c22c49-48eb-4efd-be2d-7d383d728771"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Create Cold Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4560,
+        96
+      ],
+      "typeVersion": 3,
+      "id": "041e4cc2-4f4b-4de1-97a5-b171dc3a615b"
+    },
+    {
+      "parameters": {},
+      "name": "Merge Leads",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        5152,
+        -64
+      ],
+      "typeVersion": 2,
+      "id": "72b4c5dd-4e7e-439e-8ad3-cb05f0a8c5ae"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Log Analytics",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        5360,
+        -64
+      ],
+      "typeVersion": 3,
+      "id": "96c22ee9-59ba-4f55-acd5-340f4aff24e4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Update ML",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        5552,
+        -64
+      ],
+      "typeVersion": 3,
+      "id": "6c13ab17-58d7-4877-83f7-c71b72644e46"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Triggers": {
+      "main": [
+        [
+          {
+            "node": "Load Subreddit Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Subreddit Config": {
+      "main": [
+        [
+          {
+            "node": "Split Subreddits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Subreddits": {
+      "main": [
+        [
+          {
+            "node": "Search Posts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Search Competitor Mentions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Posts": {
+      "main": [
+        [
+          {
+            "node": "Merge Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Competitor Mentions": {
+      "main": [
+        [
+          {
+            "node": "Merge Search Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Search Results": {
+      "main": [
+        [
+          {
+            "node": "Check Engagement History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Engagement History": {
+      "main": [
+        [
+          {
+            "node": "Filter New Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Posts": {
+      "main": [
+        [
+          {
+            "node": "AI Stage 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Stage 1": {
+      "main": [
+        [
+          {
+            "node": "AI Stage 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Stage 2": {
+      "main": [
+        [
+          {
+            "node": "AI Stage 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Stage 3": {
+      "main": [
+        [
+          {
+            "node": "Get Historical Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Historical Data": {
+      "main": [
+        [
+          {
+            "node": "ML Prediction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ML Prediction": {
+      "main": [
+        [
+          {
+            "node": "Route by Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Priority": {
+      "main": [
+        [
+          {
+            "node": "Alert Team",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Competitive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Premium",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Standard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Team": {
+      "main": [
+        [
+          {
+            "node": "Generate Premium",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Competitive": {
+      "main": [
+        [
+          {
+            "node": "Merge Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Premium": {
+      "main": [
+        [
+          {
+            "node": "Select Variant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Variant": {
+      "main": [
+        [
+          {
+            "node": "Merge Responses",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Responses": {
+      "main": [
+        [
+          {
+            "node": "Quality Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Check": {
+      "main": [
+        [
+          {
+            "node": "Quality Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Gate": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Flag Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit": {
+      "main": [
+        [
+          {
+            "node": "Post Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Comment": {
+      "main": [
+        [
+          {
+            "node": "Check Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Lead": {
+      "main": [
+        [
+          {
+            "node": "Enrich Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Lead": {
+      "main": [
+        [
+          {
+            "node": "Score Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Lead": {
+      "main": [
+        [
+          {
+            "node": "Route Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Lead": {
+      "main": [
+        [
+          {
+            "node": "Create Hot Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Warm Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Cold Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Hot Lead": {
+      "main": [
+        [
+          {
+            "node": "Alert Sales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Sales": {
+      "main": [
+        [
+          {
+            "node": "Start Premium Nurture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Premium Nurture": {
+      "main": [
+        [
+          {
+            "node": "Merge Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Warm Lead": {
+      "main": [
+        [
+          {
+            "node": "Start Warm Nurture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Warm Nurture": {
+      "main": [
+        [
+          {
+            "node": "Merge Leads",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Leads": {
+      "main": [
+        [
+          {
+            "node": "Log Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Analytics": {
+      "main": [
+        [
+          {
+            "node": "Update ML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

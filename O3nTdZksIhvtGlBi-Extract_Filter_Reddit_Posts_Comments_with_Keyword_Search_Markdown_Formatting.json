@@ -1,0 +1,611 @@
+{
+  "name": "Extract & Filter Reddit Posts & Comments with Keyword Search & Markdown Formatting",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "14385c42-1293-4ab6-8c4a-a84a9339ca0b",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        720,
+        32
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0c8dcb3b-3a1e-407e-8942-d44da386bf66",
+      "name": "Set Reddit Posts",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        528,
+        -336
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "a1bc078a-da48-4676-86ce-d11734e4c61c",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        400,
+        32
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "id": "2a21e0f5-a7a1-4b75-8006-4d52fb667f7f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1168,
+        -704
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c7b3e1f0-3a4a-4a07-a651-7f8753e1cadd",
+      "name": "reddit tool",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "position": [
+        -528,
+        480
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "path": "c09463b8-3516-4923-b9aa-0b066f129113",
+        "options": {}
+      },
+      "id": "8a83b946-c3bf-4067-aca1-f5fe6b65c3a9",
+      "name": "reddit tool webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -224,
+        -336
+      ],
+      "webhookId": "c09463b8-3516-4923-b9aa-0b066f129113",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8170a89d-6e25-4503-baa1-48651ad18f5d",
+      "name": "Set keywords",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -32,
+        -336
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "305a5f9c-d310-484c-9152-fc7e3cd0a650",
+      "name": "Posted in Last x days",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        752,
+        -336
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "id": "c86063b3-fe10-4773-83da-e89fcc757c3f",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        704,
+        -464
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "id": "76a46e77-d486-40b8-9297-33a342966ee3",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        -464
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "70a2a70e-992d-4775-bbc3-bbd250b3caf0",
+      "name": "Upvotes Requirement Filtering",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1040,
+        -336
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {},
+      "id": "51288da1-1071-4566-ae9e-2e6ca24b44f2",
+      "name": "Remove Duplicates",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1296,
+        -352
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "content": ""
+      },
+      "id": "1e0fb432-4b27-4c17-8a6f-30d71bd1221f",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -960,
+        -240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fcf298b1-0279-4e5a-bfe9-dbee44ad9b44",
+      "name": "Sort by upvotes (descending)",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        1488,
+        -352
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "420a7fe0-b389-4441-b5b9-1ce5623b26d5",
+      "name": "Set post for Loop",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        944,
+        16
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "19a3a0c2-efc1-46f1-97ef-0bdbe5840157",
+      "name": "Get Comments",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        1136,
+        16
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "7097f10c-0d66-4f7a-9f51-a4b570681685",
+      "name": "Format Comments",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1488,
+        16
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "eb64f072-6a83-45e7-a275-1671fc9f9563",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        1408,
+        352
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "299ae18f-42e0-4b53-8d8f-f50aa8695fb3",
+      "name": "Set Final Report",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1712,
+        16
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "32c16da3-8a7d-4465-b794-cca9c6f51ec2",
+      "name": "Combine Posts",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1168,
+        352
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "5ed53947-c7a2-46eb-a364-8fb1ef74fea9",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        960,
+        352
+      ],
+      "executeOnce": false,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "path": "c09463b8-3516-4923-b9aa-0b066f129113",
+        "options": {}
+      },
+      "id": "c2fff437-cea8-4486-83d1-4ba4ad68d07d",
+      "name": "reddit tool webhook subreddit",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -224,
+        -544
+      ],
+      "webhookId": "c09463b8-3516-4923-b9aa-0b066f129113",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b8f675a0-1e82-48b1-af6c-cb238d8e9f29",
+      "name": "Set subreddit",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -32,
+        -544
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "44ff8805-7afd-42a1-8277-a0fcaa0e3b8f",
+      "name": "Get posts from subreddit",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        240,
+        -544
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "c4f0ff14-093f-499f-859b-7bbc7ea406fd",
+      "name": "Search for posts by keywords",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        240,
+        -336
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ef94fc4f-ff67-4bcf-8851-ca39c867a3b8",
+      "name": "reddit tool http request (for subreddit)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -1088,
+        464
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "dba7c0b4-6664-4173-bc9a-48e3361e68e3",
+      "name": "reddit tool http request",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -816,
+        480
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {},
+      "id": "cf5f5466-74d6-4085-b76c-88763deee71d",
+      "name": "Extract Top 20 Comments",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1296,
+        16
+      ],
+      "executeOnce": true,
+      "typeVersion": 2
+    }
+  ],
+  "connections": {
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set post for Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Reddit Posts": {
+      "main": [
+        [
+          {
+            "node": "Posted in Last x days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reddit tool webhook": {
+      "main": [
+        [
+          {
+            "node": "Set keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set keywords": {
+      "main": [
+        [
+          {
+            "node": "Search for posts by keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Posted in Last x days": {
+      "main": [
+        [
+          {
+            "node": "Upvotes Requirement Filtering",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upvotes Requirement Filtering": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Sort by upvotes (descending)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort by upvotes (descending)": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set post for Loop": {
+      "main": [
+        [
+          {
+            "node": "Get Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Comments": {
+      "main": [
+        [
+          {
+            "node": "Extract Top 20 Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Comments": {
+      "main": [
+        [
+          {
+            "node": "Set Final Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Final Report": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Posts": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Combine Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reddit tool webhook subreddit": {
+      "main": [
+        [
+          {
+            "node": "Set subreddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set subreddit": {
+      "main": [
+        [
+          {
+            "node": "Get posts from subreddit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get posts from subreddit": {
+      "main": [
+        [
+          {
+            "node": "Set Reddit Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for posts by keywords": {
+      "main": [
+        [
+          {
+            "node": "Set Reddit Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Top 20 Comments": {
+      "main": [
+        [
+          {
+            "node": "Format Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reddit tool http request (for subreddit)": {
+      "main": [
+        [
+          {
+            "node": "reddit tool http request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": null
+}
